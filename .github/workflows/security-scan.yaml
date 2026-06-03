@@ -5,6 +5,11 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   secret_scanning: 
     name: secret scan
