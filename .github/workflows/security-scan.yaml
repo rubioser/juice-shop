@@ -42,7 +42,7 @@ jobs:
     if: always()
     name: SAST Scan
     runs-on: ubuntu-latest
-    steps:
+     steps:
       - name: Descagar código
         uses: actions/checkout@v6
 
