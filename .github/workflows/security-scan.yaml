@@ -1,6 +1,6 @@
 name: Pipeline DevSecOps
 
-on: 
+on:
   workflow_dispatch:
   pull_request:
     branches: [master]
@@ -11,17 +11,17 @@ permissions:
   actions: read
 
 jobs:
-  secret_scanning: 
-    name: secret scan
+  secret_scanning:
+    name: Secret Scan
     runs-on: ubuntu-latest
     steps:
-    - name: Descargar código
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-        
-    - name: Gitleaks
-      uses: gitleaks/gitleaks-actions@v3.0.0
+      - name: Descargar código
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v3.0.0
 
   dependency_scan:
     needs: [secret_scanning]
@@ -36,14 +36,14 @@ jobs:
 
       - name: Análisis SCA
         run: npm audit
-        
-  static_scan:     
+
+  static_scan:
     needs: [secret_scanning]
     if: always()
     name: SAST Scan
     runs-on: ubuntu-latest
     steps:
-      - name: Descagar código
+      - name: Descargar código
         uses: actions/checkout@v6
 
       - name: Semgrep
@@ -57,9 +57,9 @@ jobs:
             --sarif \
             --output semgrep.sarif \
             --error || true
-
-       - name: subir resultados
-         uses: github/codeql-action/upload-sarif@v4
-         with:
-           sarif_file: results.sarif
-           category: my-analysis-tool
+      
+      - name: Subir resultados
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
