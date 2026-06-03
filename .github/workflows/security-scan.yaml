@@ -32,4 +32,29 @@ jobs:
       - name: Análisis SCA
         run: npm audit
         
-    
+  static_scan:     
+    needs: [secret_scanning]
+    if: always()
+    name: SAST Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descagar código
+        uses: actions/checkout@v6
+
+      - name: Semgrep
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            semgrep/semgrep \
+            semgrep scan \
+            --config p/default \
+            --sarif \
+            --output semgrep.sarif \
+            --error || true
+
+       - name: subir resultados
+         uses: github/codeql-action/upload-sarif@v4
+         with:
+           sarif_file: results.sarif
+           category: my-analysis-tool
