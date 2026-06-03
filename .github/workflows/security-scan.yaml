@@ -19,6 +19,7 @@ jobs:
       uses: gitleaks/gitleaks-actions@v3.0.0
 
   dependency_scan:
+    needs: [secret_scanning]
     name: SCA Scan
     runs-on: ubuntu-latest
     steps:
